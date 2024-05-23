@@ -1,0 +1,43 @@
+{% extends 'baseusuario.html' %}
+
+{% block content %}
+<style>
+    .text-center.display-4.py-4.mt-5 {
+        color: white;
+    }
+    .sidebar ul li.administrar1 {
+        color: #dee2e6;
+        background-color: #6c757d;
+        border-radius: 0px;
+    }
+    .dark-mode .sidebar ul li.administrar1 {
+        background-color: #b2dafa;
+        border-radius: 0px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="text-center display-4 py-4 mt-5">Lista de Grupos</h2>
+            <a href="/administrar/" class="btn btn-secondary mb-3">Volver</a>
+            <a href="/administrar/grupos/create" class="btn btn-success mb-3">Crear Grupo</a>
+
+            <div class="group-list">
+                <ul class="list-group">
+                    {% for grupo in grupos %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="{% url 'admi_grupo' grupo.id %}" class="name">{{ grupo.name }}</a>
+                                <a {{ grupo.description }}> </a>
+                                <span class="badge bg-info rounded-pill">Activo</span>
+                            </li>
+
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

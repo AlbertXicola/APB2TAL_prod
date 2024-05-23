@@ -1,0 +1,161 @@
+{% extends 'baseusuario.html' %}
+{% block content %}
+{% load static %}
+
+<body>
+  <div class="profile-container2" id="profile-container">
+    <div class="profile-picture">
+      <img src="" alt="Profile Picture" id="profile-image">
+    </div>
+    
+    
+    <div id="profile-details" class="profile-details">
+      <h2>{{ user.username }}</h2>
+      <p><strong>Correo electrónico:</strong> {{ user.email }} </p>
+      <p><strong>Nombre:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+      {% if not user.is_accepted %}
+      <div class="alert alert-warning" role="alert">
+        Esperando a que un administrador acepte tu perfil.
+      </div>
+      {% else %}
+      <p><strong>Rol:</strong> {% if user.is_staff %} Administrador {% else %} Usuario {% endif %}</p>
+      <p><strong>Edad:</strong>
+        {% if user.edad %}
+          {{ user.edad }} años
+        {% endif %}
+      </p>
+
+
+      <p><strong>Se unió el:</strong> {{ user.date_joined }}</p><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+      <a href="/perfil/editar" class="btn btn-secondary mb-3"><i class="fas fa-edit"></i> Editar</a>      
+      {% endif %}
+      
+    </div>
+  </div>  
+</body>
+
+<script>
+  const colorButtons = document.querySelectorAll('.color-btn');
+  const profileContainer = document.getElementById('profile-container');
+
+  function changeColor(color) {
+      profileContainer.style.backgroundColor = color;
+      localStorage.setItem('userColor', color);
+  }
+
+  colorButtons.forEach(button => {
+      button.addEventListener('click', function() {
+          const color = this.dataset.color;
+          changeColor(color);
+      });
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const savedColor = localStorage.getItem('userColor');
+      if (savedColor) {
+          changeColor(savedColor);
+      }
+  });
+
+  function guardarPerfil() {
+    if (validarNombreUsuario()) {
+        toggleEditMenu();
+        document.querySelector("form").submit();
+    }
+  }
+</script>
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const profileImage = document.getElementById('profile-image');
+  
+  // Leer la imagen seleccionada del localStorage cuando se carga la página
+  const savedImage = localStorage.getItem('userImage');
+  if (savedImage) {
+      profileImage.src = savedImage;
+  } else {
+      profileImage.src = "https://cdn-icons-png.flaticon.com/512/147/147142.png"; // URL de imagen por defecto si no hay ninguna guardada
+  }
+});
+</script>
+<style>
+  .profile-container2 {
+    max-width: 600px;
+    max-height: 760px;
+    margin: 50px auto;
+    background-color: #ff000011;
+    border: 2px solid #ff000011;
+    border-radius: 10px;
+    padding: 30px;
+    margin-top: 90px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  .profile-picture {
+    text-align: center;
+  }
+  .profile-picture img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  }
+  .profile-details {
+    margin-top: 30px;
+  }
+  .profile-details h2 {
+    margin-bottom: 17px;
+    color: #ffffff;
+  }
+  .profile-details p {
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+  .social-links {
+    margin-top: 30px;
+    text-align: center;
+  }
+  .social-links a {
+    text-decoration: none;
+    color: #ffffff;
+    margin-right: 15px;
+    transition: color 0.3s;
+    font-size: 24px;
+  }
+  .social-links a:hover {
+    color: #007bff;
+  }
+  
+  .sidebar ul li.perfil {
+    color: #dee2e6;
+    background-color: #6c757d;
+    border-radius: 0px;
+  }
+  p.buenas{
+    margin-bottom: 0px !important;
+  }
+  form{
+    margin-top: 30px;
+  }
+  .waiting-message {
+    margin-top: 20px;
+  }
+
+  .waiting-message h4 {
+      color: #ffffff;
+  }
+
+  /* Ocultar el botón de editar cuando el usuario no está aceptado */
+  .waiting-message + button {
+      display: none;
+  }
+  .dark-mode .sidebar ul li.perfil {
+      background-color: #b2dafa;
+      border-radius: 0px;
+  }
+</style>
+{% endblock %}
