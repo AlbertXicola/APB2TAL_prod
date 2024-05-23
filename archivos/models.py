@@ -1,7 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Group
-from django.conf import settings  # Importa la configuración de Django
-
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User, Group
+from django.conf import settings
+from django.db import models
 # Create your models here.
 
 class Task(models.Model):
@@ -54,6 +55,7 @@ class Compartido(models.Model):
    
    
 
+
 class Mensajes(models.Model):
     enviador = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='enviador_mensajes', on_delete=models.CASCADE, null=True)
     receptor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='receptor_mensajes', on_delete=models.CASCADE, null=True)
@@ -65,17 +67,31 @@ class Mensajes(models.Model):
     
     def __str__(self):
         return self.title
+    
 
+
+  
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+# Modelo de usuario personalizado
 class CustomUser(AbstractUser):
-    """
-    Clase de usuario personalizada que extiende la clase AbstractUser predeterminada de Django.
-    """
     is_accepted = models.BooleanField(
         _("accept status"),
         default=False,
         help_text=_("Designates whether this user is accepted."),
     )
-    edad = models.IntegerField(default=None, null=True, blank=True)
+    edad = models.IntegerField(default=0, null=True, blank=True)
 
+    def __str__(self):
+        return self.username
+    
+    
+from django.db import models
+from django.contrib.auth.models import Group
+
+class GroupDescription(models.Model):
+    group = models.OneToOneField(Group, related_name='description', on_delete=models.CASCADE)
+    description = models.TextField()

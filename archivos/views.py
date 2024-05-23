@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.auth.models import Group
 from django.http import HttpResponse, Http404
 from cryptography.fernet import Fernet
 from django.db import IntegrityError
@@ -29,50 +29,48 @@ import os
 from cryptography.fernet import Fernet
 from datetime import datetime
 import datetime
-from .forms import CustomUserCreationForm
 
 
 def home(request):
     return render(request, 'home.html')
 
 
-def signup(request):
+from .forms import CustomUserCreationForm  # Asegúrate de importar el formulario personalizado
 
+def signup(request):
     if request.method == 'GET':
-        return render(request, 'signup.html',{
-            'form' : CustomUserCreationForm
-        })
+        return render(request, 'signup.html', {'form': CustomUserCreationForm()})  # Utiliza el formulario personalizado
     else:
         if request.POST['password1'] == request.POST['password2']:
             try:
                 user = CustomUser.objects.create_user(username=request.POST['username'],
-                password=request.POST['password1'],email=request.POST['email'],first_name=request.POST['first_name'],last_name=request.POST['last_name'])
+                                                       password=request.POST['password1'],
+                                                       email=request.POST['email'],
+                                                       first_name=request.POST['first_name'],
+                                                       last_name=request.POST['last_name'])
                 print('username:', request.POST['username'])
                 user.save()
                 login(request, user)
                 return redirect('perfil')
             
             except IntegrityError:
-                return render(request, 'signup.html',{
-                'form' : CustomUserCreationForm,
-                'error' : 'Please enter valid data'
-                })
+                return render(request, 'signup.html', {'form': CustomUserCreationForm(), 'error': 'Please enter valid data'})
+
+
 
 def signin(request):
     if request.method == 'GET':
-        return render(request, 'signin.html',{
-            'form' : AuthenticationForm    })
+        return render(request, 'signin.html', {'form': AuthenticationForm()})
     else:
-        user = authenticate(request, username=request.POST['username'], 
-                                     password=request.POST['password'])
-        if user is None:
-            return render(request, 'signin.html',{
-            'form' : AuthenticationForm,
-            'error': 'Username or password is incorrect'})
-            
-        else:
-            login(request, user)
-            return redirect('perfil')
+        form = AuthenticationForm(request, request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('perfil')
+        return render(request, 'signin.html', {'form': form, 'error': 'Username or password is incorrect'})
 
 
 def terminos(request):
@@ -95,6 +93,7 @@ def validar_username(request):
         'is_taken': CustomUser.objects.filter(username__iexact=username).exists()
     }
     return JsonResponse(data)
+
 
 def accepted_user_required(view_func):
     decorated_view_func = user_passes_test(
@@ -228,6 +227,7 @@ def delete_task(request, task_id):
 def is_staff(user):
     return user.is_authenticated and user.is_staff
 
+
 @accepted_user_required
 @user_passes_test(is_staff, login_url='/')
 @login_required
@@ -240,12 +240,14 @@ def administrar(request):
 @user_passes_test(is_staff)
 @login_required
 def administrar_usuarios(request):
+
     usuarios = CustomUser.objects.all()
 
     context = {
         'usuarios': usuarios
     }
     return render(request, 'administrar_usuarios.html', context)
+
 @accepted_user_required
 @user_passes_test(is_staff)
 @login_required
@@ -313,6 +315,10 @@ def registros_admin(request):
     return render(request, 'logs_admin.html', {'logs_mongo': mensaje})
 
 
+from django.contrib.auth.models import Group
+from .models import GroupDescription
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
 @accepted_user_required
 @user_passes_test(is_staff)
@@ -321,24 +327,24 @@ def registros_admin(request):
 def crear_grupo(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
-        description = request.POST.get('description')
+        descripcion_texto = request.POST.get('description')
         
         # Verificar si el grupo ya existe
         if Group.objects.filter(name=nombre).exists():
             messages.error(request, 'El grupo ya existe.')
             return redirect('crear_grupo')  # Redireccionar al mismo formulario
             
-        # Crear el grupo
-        nuevo_grupo = Group(name=nombre, description=description)  # Asegúrate de que 'descripcion' sea un campo válido en tu modelo Group
+        # Crear una instancia de Group
+        nuevo_grupo = Group.objects.create(name=nombre)
         
-        nuevo_grupo.save()
-
-
+        # Crear una instancia de GroupDescription y asignarla al grupo
+        descripcion = GroupDescription.objects.create(group=nuevo_grupo, description=descripcion_texto)
+        
         messages.success(request, 'Grupo creado con éxito.')
         
         return redirect('/administrar/grupos')  # Redireccionar a donde sea apropiado
         
-    return render(request, 'crear_grupo.html')  # Asegúrate de reemplazar 'nombre_de_tu_template.html' con el nombre de tu template para el formulario
+    return render(request, 'crear_grupo.html')  # Asegúrate de reemplazar 'crear_grupo.html' con el nombre de tu template para el formulario
 
 
 @csrf_protect
@@ -356,10 +362,15 @@ def admi_grupo(request, id):
 
         elif 'guardar' in request.POST:
             nombre = request.POST.get('nombre')
-            description = request.POST.get('description')
-            grupo.description = description
+            descripcion_texto = request.POST.get('descripcion')  # Cambia 'description' a 'descripcion'
+            
+            descripcion, created = GroupDescription.objects.get_or_create(group=grupo)
+            descripcion.description = descripcion_texto
+
             grupo.name = nombre
             grupo.save()
+            descripcion.save()
+
 
 
             # Procesar los usuarios añadidos al grupo
@@ -462,10 +473,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def generar_clave():
-    if not os.getenv("SECRET_KEY"):
-        clave = Fernet.generate_key()
-        # Guardar la clave en la variable de entorno
-        os.environ["SECRET_KEY"] = clave.decode()
+    if not os.path.exists('.env'):
+        # Si el archivo .env no existe, crea uno y guarda la clave
+        with open('.env', 'w') as f:
+            clave = Fernet.generate_key()
+            clave_str = clave.decode()
+            f.write(f'SECRET_KEY={clave_str}\n')
+            os.environ["SECRET_KEY"] = clave_str
+    else:
+        # Si el archivo .env ya existe, verifica si la variable de entorno SECRET_KEY está definida
+        if not os.getenv("SECRET_KEY"):
+            clave = Fernet.generate_key()
+            clave_str = clave.decode()
+            # Guarda la clave en el archivo .env y en la variable de entorno
+            with open('.env', 'a') as f:
+                f.write(f'SECRET_KEY={clave_str}\n')
+                os.environ["SECRET_KEY"] = clave_str
 
 def cargar_clave():
     # Cargar la clave desde la variable de entorno SECRET_KEY
@@ -1022,6 +1045,9 @@ def grupo_info(request, name):
     # Obtener el grupo por su nombre
     grupo_seleccionado = Group.objects.get(name=name)
 
+    # Obtener la descripción del grupo
+    descripcion_grupo = grupo_seleccionado.description.description
+
     # Verificar si el usuario actual pertenece al grupo seleccionado
     if not usuario_actual.groups.filter(name=name).exists():
         raise Http404("No tienes permiso para acceder a este grupo.")
@@ -1033,8 +1059,10 @@ def grupo_info(request, name):
         'usuario_actual': usuario_actual,
         'group_name': name,
         'group': grupo_seleccionado,
+        'descripcion_grupo': descripcion_grupo,
         'archivos_compartidos_al_grupo': archivos_compartidos_al_grupo,
     })
+
 
 
 @csrf_protect

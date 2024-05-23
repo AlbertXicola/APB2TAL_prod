@@ -1,7 +1,5 @@
 from django import forms
 from .models import *
-from django.contrib.auth.forms import UserCreationForm as BaseUserCreationForm
-from .models import CustomUser
 
 class TaskForm(forms.ModelForm):
     class Meta:
@@ -14,11 +12,13 @@ class TaskForm(forms.ModelForm):
             'important' : forms.CheckboxInput(attrs={'class': 'form-check-input ',}),
             'completed': forms.CheckboxInput(attrs={'class': 'form-check-input '}),
         }
-
-
-class CustomUserCreationForm(BaseUserCreationForm):
-    class Meta(BaseUserCreationForm.Meta):
-        model = CustomUser
-        fields = ("username", "email", "first_name", "last_name")
+    
     
         
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = CustomUser
+        fields = ['username', 'email', 'first_name', 'last_name']

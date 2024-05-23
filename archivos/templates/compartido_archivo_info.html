@@ -1,6 +1,7 @@
 {% extends 'baseusuario.html' %}
 
 {% block content %}
+
 <style>
     .text-center.display-4.py-4 {
         color: white; /* Color del texto */
@@ -16,11 +17,8 @@
         background-color: #6c757d;
         border-radius: 0px;
     }
-    .card-title{
-        color: white;
-    }
-</style>
 
+</style>
 <div class="container">
     <div class="row">
         <div class="col-md-12 mt-5">
@@ -29,8 +27,8 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <h4 class="card-title">Detalles del archivo</h4>
-                    <div class="card mb-1" style="width: 1100px;">
+                    <h4 style="color: white;" class="card-title">Detalles del archivo</h4>
+                    <div class="card mb-1" style="width: 200%;">
                         <div class="card-body">
                     
                             <p class="card-text" style="font-size: 18px;"><strong>Nombre:</strong> {{ archivo.nombre_archivo }}</p>
