@@ -2,8 +2,11 @@
 # exit on error
 set -o errexit
 
-# poetry install
+# Instalar las dependencias desde requirements.txt
 pip install -r requirements.txt
 
+# Recopilar archivos estáticos
 python manage.py collectstatic --no-input
-python manage-py migrate
+
+# Aplicar migraciones de la base de datos
+python manage.py migrate
