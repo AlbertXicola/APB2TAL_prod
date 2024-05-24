@@ -292,27 +292,28 @@ def registros(request):
     # Obtener el ID del usuario actual
     user_id = request.user.id
     
-    client = MongoClient('localhost', 27018) 
-    db = client['django'] 
-    collection = db['Logs'] 
+    #client = MongoClient('localhost', 27018) 
+    #db = client['django'] 
+    #collection = db['Logs'] 
+    #mensaje = list(collection.find({"user_id": user_id}))
+    #client.close()
     
-    # Filtrar los registros por el ID del usuario actual
-    mensaje = list(collection.find({"user_id": user_id}))
-    
-    client.close()
-    return render(request, 'mis_registros.html', {'logs_mongo': mensaje})
-
+    return render(request, 'mis_registros.html')
+    #return render(request, 'mis_registros.html', {'logs_mongo': mensaje})
 
 @user_passes_test(is_staff)
 @accepted_user_required
 @login_required
 def registros_admin(request):
-    client = MongoClient('localhost', 27018) 
-    db = client['django'] 
-    collection = db['Logs'] 
-    mensaje = list(collection.find({}))  # Retrieve all logs
-    client.close()
-    return render(request, 'logs_admin.html', {'logs_mongo': mensaje})
+    #client = MongoClient('localhost', 27018) 
+    #db = client['django'] 
+    #collection = db['Logs'] 
+    #mensaje = list(collection.find({}))  # Retrieve all logs
+    #client.close()
+    
+    return render(request, 'logs_admin.html')
+
+    #return render(request, 'mis_registros.html', {'logs_mongo': mensaje})
 
 
 from django.contrib.auth.models import Group
@@ -660,26 +661,27 @@ def archivos_analiz(request):
                     nuevo_path = "hecho"
                     print("Moviendo carpeta en HECHO ...")
                     print("TODO CORRECTO!")
-                    print("=========== SCAN FINALIZADO (" + current_time + ") ===========")
-                    print("       ")
-                    # Establecer conexión con la base de datos MongoDB
-                    client = MongoClient('localhost', 27018)
-                    db = client['django']
-                    collection = db['Logs']
-
-                    # Crear el texto del análisis
-                    texto_analisis = f"El usuario '{request.user.username}' ha analizado el archivo '{nombre_archivo}'"
-
-                    # Crear el documento a insertar en la colección
-                    archivo_mongo = {
+                    
+                    
+                    
+                    #print("=========== SCAN FINALIZADO (" + current_time + ") ===========")
+                    #print("       ")
+                    #client = MongoClient('localhost', 27018)
+                    #db = client['django']
+                    #collection = db['Logs']
+                    #texto_analisis = f"El usuario '{request.user.username}' ha analizado el archivo '{nombre_archivo}'"
+                    #archivo_mongo = {
                             
-                        "hora": hora_actual,
-                        "user_id": request.user.id,
-                        "mensaje": texto_analisis
-                    }
-
-                    collection.insert_one(archivo_mongo)
-                    shutil.move(ruta_carpeta, nuevo_path)
+                    #    "hora": hora_actual,
+                    #    "user_id": request.user.id,
+                    #    "mensaje": texto_analisis
+                    #}
+                    #collection.insert_one(archivo_mongo)
+                    #shutil.move(ruta_carpeta, nuevo_path)
+                    
+                    
+                    
+                    
                     
                 except Exception as e:
                     # Manejar cualquier excepción que pueda ocurrir durante la inserción en la base de datos
@@ -750,14 +752,12 @@ def eliminar_archivo(request, archivo_id):
     # Crear el texto del análisis
     texto_analisis = f"El usuario '{request.user.username}' ha eliminado el archivo '{archivo.nombre_archivo}'"
 
-    # Crear el documento a insertar en la colección
-    archivo_mongo = {
-        "hora": hora_actual,
-        "user_id": request.user.id,
-        "mensaje": texto_analisis
-    }
-
-    collection.insert_one(archivo_mongo)
+    #archivo_mongo = {
+    #    "hora": hora_actual,
+    #    "user_id": request.user.id,
+    #    "mensaje": texto_analisis
+    #}
+    #collection.insert_one(archivo_mongo)
     
 
     # Después de eliminar, redirigir a la página de archivos
@@ -896,14 +896,13 @@ def compartir_archivo(request, archivo_id):
 
     
 
-# Crear el documento a insertar en la colección
-        archivo_mongo = {
-            "hora": hora_actual,
-            "user_id": request.user.id,
-            "mensaje": texto_analisis
-        }
+        #archivo_mongo = {
+        #    "hora": hora_actual,
+        #    "user_id": request.user.id,
+        #    "mensaje": texto_analisis
+        #}
 
-        collection.insert_one(archivo_mongo)
+        #collection.insert_one(archivo_mongo)
     
         # Mensaje de éxito
         messages.success(request, 'Archivo compartido exitosamente.')
