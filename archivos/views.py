@@ -779,15 +779,13 @@ def descargar_archivo(request, archivo_id):
             # Imprimir la ruta del archivo
             print("Ruta del archivo:", ruta_archivo)
             
-            # Cargar la clave y desencriptar el contenido
-            clave = cargar_clave()
-            fernet = Fernet(clave)
+            # Abrir el archivo en modo binario para lectura
             with open(ruta_archivo, 'rb') as f:
-                encrypted_contenido = f.read()
-                decrypted_contenido = fernet.decrypt(encrypted_contenido)
+                # Leer el contenido del archivo
+                contenido = f.read()
             
-            # Crear una respuesta HTTP con el contenido desencriptado
-            response = HttpResponse(decrypted_contenido, content_type="application/octet-stream")
+            # Crear una respuesta HTTP con el contenido del archivo
+            response = HttpResponse(contenido, content_type="application/octet-stream")
             response['Content-Disposition'] = f'attachment; filename="{archivo.nombre_archivo}"'
             return response
         else:
@@ -796,6 +794,7 @@ def descargar_archivo(request, archivo_id):
     except Archivo.DoesNotExist:
         # Manejar el caso en el que el archivo no existe en la base de datos
         return HttpResponse("El archivo no existe.")
+
 
 
 @csrf_protect
