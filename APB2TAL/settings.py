@@ -140,7 +140,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Define STATIC_ROOT para e
 
 LOGIN_URL = '/signin'
 
-MEDIA_URL = '/data/'
+MEDIA_URL = '/hecho/'
 
 
 #AVATAR_STORAGE_DIR = 'avatars/'
