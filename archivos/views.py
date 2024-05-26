@@ -775,6 +775,8 @@ def descargar_archivo(request, archivo_id):
         if adquisicion.objects.filter(archivo=archivo, user=request.user).exists():
             # Obtener la ruta del archivo en el sistema de archivos
             ruta_archivo = os.path.join(settings.MEDIA_ROOT2, archivo.id_APB2TAL, archivo.nombre_archivo)
+            # Imprimir la ruta del archivo
+            print("Ruta del archivo:", ruta_archivo)
             
             # Cargar la clave y desencriptar el contenido
             clave = cargar_clave()
