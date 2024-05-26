@@ -542,7 +542,7 @@ def archivos_analiz(request):
                 # Generar el nombre de la carpeta utilizando el hash del archivo y el nombre de usuario
                 # Ver línea 369
                 nombre_carpeta = hash_archivo
-                ruta_carpeta = os.path.join(settings.MEDIA_ROOT, nombre_carpeta)
+                ruta_carpeta = os.path.join(settings.MEDIA_ROOT2, nombre_carpeta)
                 
                 # Crear la carpeta si no existe
                 if not os.path.exists(ruta_carpeta):
