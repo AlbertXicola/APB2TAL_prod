@@ -660,6 +660,7 @@ def archivos_analiz(request):
 
                     nuevo_path = "hecho"
                     print("Moviendo carpeta en HECHO ...")
+                    print("Ruta de la carpeta destino:", ruta_carpeta)
                     print("TODO CORRECTO!")
                     
                     
