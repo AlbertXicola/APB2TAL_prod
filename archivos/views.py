@@ -537,7 +537,8 @@ def archivos_analiz(request):
                 if not adquisicion.objects.filter(archivo=archivo_existente, user=request.user).exists():
                     # El usuario no está en la tabla de adquisición para este archivo, así que creamos un nuevo registro
                     adquisicion.objects.create(archivo=archivo_existente, user=request.user, group=None)
-   
+                #collection.insert_one(archivo_mongo)
+
                 
             else:
                 # Generar el nombre de la carpeta utilizando el hash del archivo y el nombre de usuario
@@ -679,14 +680,14 @@ def archivos_analiz(request):
                         "mensaje": texto_analisis
                     }
 
-                    try:
+                    #try:
 
-                        collection.insert_one(archivo_mongo)
-                        client.close()
+                    #    collection.insert_one(archivo_mongo)
+                    #    client.close()
 
-                        print("Documento insertado en MongoDB Atlas exitosamente!")
-                    except Exception as e:
-                        print("Error al insertar documento en MongoDB Atlas:", e)
+                    #    print("Documento insertado en MongoDB Atlas exitosamente!")
+                    #except Exception as e:
+                    #    print("Error al insertar documento en MongoDB Atlas:", e)
                         
                     if malicious >= 1:
                         # Eliminar la carpeta si hay al menos 1 positivo
@@ -770,14 +771,15 @@ def eliminar_archivo(request, archivo_id):
         "mensaje": texto_analisis
     }
 
-    try:
 
-        collection.insert_one(archivo_mongo)
-        client.close()
+    #try:
 
-        print("Documento insertado en MongoDB Atlas exitosamente!")
-    except Exception as e:
-        print("Error al insertar documento en MongoDB Atlas:", e)
+    #    collection.insert_one(archivo_mongo)
+    #    client.close()
+
+    #    print("Documento insertado en MongoDB Atlas exitosamente!")
+    #except Exception as e:
+    #    print("Error al insertar documento en MongoDB Atlas:", e)
         
     # Después de eliminar, redirigir a la página de archivos
     return redirect('archivos')
@@ -916,35 +918,35 @@ def compartir_archivo(request, archivo_id):
 
     
 
-# Crear el documento a insertar en la colección
         archivo_mongo = {
             "hora": hora_actual,
             "user_id": request.user.id,
             "mensaje": texto_analisis
         }
         
-        try:
-            collection.insert_one(archivo_mongo)
-            client.close()
-            print("Documento insertado en MongoDB Atlas exitosamente!")
+    #    try:
+    #        collection.insert_one(archivo_mongo)
+    #        client.close()
+    #        print("Documento insertado en MongoDB Atlas exitosamente!")
 
-            # Success message
-            messages.success(request, 'Archivo compartido exitosamente.')
+    #        messages.success(request, 'Archivo compartido exitosamente.')
 
-            # Redirect to a page, for example, the files page
-            return redirect('archivos')
-        except Exception as e:
-            print("Error al insertar documento en MongoDB Atlas:", e)
+    #        return redirect('archivos')
+    #    except Exception as e:
+    #        print("Error al insertar documento en MongoDB Atlas:", e)
 
-            # Error message
-            messages.error(request, 'Error al compartir el archivo. Por favor, inténtelo de nuevo.')
+    #        messages.error(request, 'Error al compartir el archivo. Por favor, inténtelo de nuevo.')
 
-            # Redirect to a page, for example, the files page
-            return redirect('archivos')
+    #        return redirect('archivos')
+    #else:
+    #    pass
+    
+        messages.success(request, 'Archivo compartido exitosamente.')
+
+        return redirect('archivos')
     else:
-        # If the request is not POST, render the form again or redirect according to your logic
         pass
-
+    
 @csrf_protect
 @accepted_user_required
 @login_required
