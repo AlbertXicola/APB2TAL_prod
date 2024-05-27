@@ -665,8 +665,9 @@ def archivos_analiz(request):
                     
                     
                     
-                    #print("=========== SCAN FINALIZADO (" + current_time + ") ===========")
-                    #print("       ")
+                    print("=========== SCAN FINALIZADO (" + current_time + ") ===========")
+                    print("       ")
+                    
                     #client = MongoClient('localhost', 27018)
                     #db = client['django']
                     #collection = db['Logs']
@@ -678,9 +679,15 @@ def archivos_analiz(request):
                     #    "mensaje": texto_analisis
                     #}
                     #collection.insert_one(archivo_mongo)
-                    #shutil.move(ruta_carpeta, nuevo_path)
-                    
-                    
+                    if malicious >= 1:
+                        # Eliminar la carpeta si hay al menos 1 positivo
+                        print("Eliminando carpeta por tener al menos 1 positivo...")
+                        shutil.rmtree(ruta_carpeta)
+                        print("Carpeta eliminada correctamente.")
+
+                    else:
+                        # Mover la carpeta si no hay positivos
+                        shutil.move(ruta_carpeta, nuevo_path)
                     
                     
                     
@@ -775,7 +782,7 @@ def descargar_archivo(request, archivo_id):
         # Verificar si el usuario tiene permiso para descargar este archivo
         if adquisicion.objects.filter(archivo=archivo, user=request.user).exists():
             # Obtener la ruta del archivo en el sistema de archivos
-            ruta_archivo = os.path.join(settings.MEDIA_ROOT2, archivo.id_APB2TAL, archivo.nombre_archivo)
+            ruta_archivo = os.path.join(settings.MEDIA_ROOT, archivo.id_APB2TAL, archivo.nombre_archivo)
             # Imprimir la ruta del archivo
             print("Ruta del archivo:", ruta_archivo)
             
