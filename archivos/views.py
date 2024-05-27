@@ -29,7 +29,13 @@ import os
 from cryptography.fernet import Fernet
 from datetime import datetime
 import datetime
-
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+# Conexión a MongoDB Atlas
+uri = "mongodb+srv://albertxicola03:365b3Z8gEferQxGX@cluster0.g4uwgce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(uri, server_api=ServerApi('1'))
+db = client['django']
+collection = db['Logs']
 
 def home(request):
     return render(request, 'home.html')
@@ -292,28 +298,23 @@ def registros(request):
     # Obtener el ID del usuario actual
     user_id = request.user.id
     
-    #client = MongoClient('localhost', 27018) 
-    #db = client['django'] 
-    #collection = db['Logs'] 
-    #mensaje = list(collection.find({"user_id": user_id}))
-    #client.close()
+    # Filtrar los registros por el ID del usuario actual
+    mensaje = list(collection.find({"user_id": user_id}))
     
-    return render(request, 'mis_registros.html')
-    #return render(request, 'mis_registros.html', {'logs_mongo': mensaje})
+    client.close()
+    return render(request, 'mis_registros.html', {'logs_mongo': mensaje})
+
 
 @user_passes_test(is_staff)
 @accepted_user_required
 @login_required
 def registros_admin(request):
-    #client = MongoClient('localhost', 27018) 
-    #db = client['django'] 
-    #collection = db['Logs'] 
-    #mensaje = list(collection.find({}))  # Retrieve all logs
-    #client.close()
     
-    return render(request, 'logs_admin.html')
+ 
+    mensaje = list(collection.find({}))  # Retrieve all logs
+    client.close()
+    return render(request, 'logs_admin.html', {'logs_mongo': mensaje})
 
-    #return render(request, 'mis_registros.html', {'logs_mongo': mensaje})
 
 
 from django.contrib.auth.models import Group
@@ -668,18 +669,25 @@ def archivos_analiz(request):
                     print("=========== SCAN FINALIZADO (" + current_time + ") ===========")
                     print("       ")
                     
-                    #client = MongoClient('localhost', 27018)
-                    #db = client['django']
-                    #collection = db['Logs']
-                    #texto_analisis = f"El usuario '{request.user.username}' ha analizado el archivo '{nombre_archivo}'"
-                    #archivo_mongo = {
+                    texto_analisis = f"El usuario '{request.user.username}' ha analizado el archivo '{nombre_archivo}'"
+
+                    # Crear el documento a insertar en la colección
+                    archivo_mongo = {
                             
-                    #    "hora": hora_actual,
-                    #    "user_id": request.user.id,
-                    #    "mensaje": texto_analisis
-                    #}
-                    #collection.insert_one(archivo_mongo)
-                    
+                        "hora": hora_actual,
+                        "user_id": request.user.id,
+                        "mensaje": texto_analisis
+                    }
+
+                    try:
+
+                        collection.insert_one(archivo_mongo)
+                        client.close()
+
+                        print("Documento insertado en MongoDB Atlas exitosamente!")
+                    except Exception as e:
+                        print("Error al insertar documento en MongoDB Atlas:", e)
+                        
                     if malicious >= 1:
                         # Eliminar la carpeta si hay al menos 1 positivo
                         print("Eliminando carpeta por tener al menos 1 positivo...")
@@ -689,8 +697,6 @@ def archivos_analiz(request):
                     else:
                         # Mover la carpeta si no hay positivos
                         shutil.move(ruta_carpeta, nuevo_path)
-                    
-                    
                     
                 except Exception as e:
                     # Manejar cualquier excepción que pueda ocurrir durante la inserción en la base de datos
@@ -707,9 +713,6 @@ def archivos_analiz(request):
             
         return redirect('archivos')
       
-        
-    # Devolver la respuesta HTML
-    return render(request, 'archivos_analiz.html')
 
 
 
@@ -727,10 +730,6 @@ def archivos(request):
     
     return render(request, 'archivos.html', {'registros': registros})
 
-
-client = MongoClient('localhost', 27018)
-db = client['django']
-collection = db['Logs']
 
 
 
@@ -758,20 +757,26 @@ def eliminar_archivo(request, archivo_id):
     registro_adquisicion.delete()
 
 
-    # Crear el texto del análisis
     texto_analisis = f"El usuario '{request.user.username}' ha eliminado el archivo '{archivo.nombre_archivo}'"
 
-    #archivo_mongo = {
-    #    "hora": hora_actual,
-    #    "user_id": request.user.id,
-    #    "mensaje": texto_analisis
-    #}
-    #collection.insert_one(archivo_mongo)
-    
+    # Crear el documento a insertar en la colección
+    archivo_mongo = {
+        "hora": hora_actual,
+        "user_id": request.user.id,
+        "mensaje": texto_analisis
+    }
 
+    try:
+
+        collection.insert_one(archivo_mongo)
+        client.close()
+
+        print("Documento insertado en MongoDB Atlas exitosamente!")
+    except Exception as e:
+        print("Error al insertar documento en MongoDB Atlas:", e)
+        
     # Después de eliminar, redirigir a la página de archivos
     return redirect('archivos')
-
 
 @csrf_protect
 @accepted_user_required
@@ -907,21 +912,33 @@ def compartir_archivo(request, archivo_id):
 
     
 
-        #archivo_mongo = {
-        #    "hora": hora_actual,
-        #    "user_id": request.user.id,
-        #    "mensaje": texto_analisis
-        #}
+# Crear el documento a insertar en la colección
+        archivo_mongo = {
+            "hora": hora_actual,
+            "user_id": request.user.id,
+            "mensaje": texto_analisis
+        }
+        
+        try:
+            collection.insert_one(archivo_mongo)
+            client.close()
+            print("Documento insertado en MongoDB Atlas exitosamente!")
 
-        #collection.insert_one(archivo_mongo)
-    
-        # Mensaje de éxito
-        messages.success(request, 'Archivo compartido exitosamente.')
+            # Success message
+            messages.success(request, 'Archivo compartido exitosamente.')
 
-        # Redireccionar a alguna página, por ejemplo, a la página de archivos
-        return redirect('archivos')
+            # Redirect to a page, for example, the files page
+            return redirect('archivos')
+        except Exception as e:
+            print("Error al insertar documento en MongoDB Atlas:", e)
+
+            # Error message
+            messages.error(request, 'Error al compartir el archivo. Por favor, inténtelo de nuevo.')
+
+            # Redirect to a page, for example, the files page
+            return redirect('archivos')
     else:
-        # Si la solicitud no es POST, renderizar nuevamente el formulario o redireccionar según tu lógica
+        # If the request is not POST, render the form again or redirect according to your logic
         pass
 
 @csrf_protect
