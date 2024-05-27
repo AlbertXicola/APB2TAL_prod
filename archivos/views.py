@@ -542,7 +542,7 @@ def archivos_analiz(request):
                 # Generar el nombre de la carpeta utilizando el hash del archivo y el nombre de usuario
                 # Ver línea 369
                 nombre_carpeta = hash_archivo
-                ruta_carpeta = os.path.join(settings.MEDIA_ROOT2, nombre_carpeta)
+                ruta_carpeta = os.path.join(settings.MEDIA_ROOT, nombre_carpeta)
                 
                 # Crear la carpeta si no existe
                 if not os.path.exists(ruta_carpeta):
@@ -778,7 +778,7 @@ def descargar_archivo(request, archivo_id):
         # Verificar si el usuario tiene permiso para descargar este archivo
         if adquisicion.objects.filter(archivo=archivo, user=request.user).exists():
             # Obtener la ruta del archivo en el sistema de archivos
-            ruta_archivo = os.path.join(settings.MEDIA_ROOT, archivo.id_APB2TAL, archivo.nombre_archivo)
+            ruta_archivo = os.path.join(settings.MEDIA_ROOT2, archivo.id_APB2TAL, archivo.nombre_archivo)
             # Imprimir la ruta del archivo
             print("Ruta del archivo:", ruta_archivo)
             
