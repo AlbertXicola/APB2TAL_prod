@@ -713,6 +713,10 @@ def archivos_analiz(request):
             
         return redirect('archivos')
       
+        
+    # Devolver la respuesta HTML
+    return render(request, 'archivos_analiz.html')
+      
 
 
 
