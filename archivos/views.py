@@ -32,10 +32,6 @@ import datetime
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 # Conexión a MongoDB Atlas
-uri = "mongodb+srv://albertxicola03:365b3Z8gEferQxGX@cluster0.g4uwgce.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-client = MongoClient(uri, server_api=ServerApi('1'))
-db = client['django']
-collection = db['Logs']
 
 def home(request):
     return render(request, 'home.html')
