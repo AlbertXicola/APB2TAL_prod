@@ -92,13 +92,15 @@ WSGI_APPLICATION = 'APB2TAL.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://postgres:postgres@localhost/postgres',
+    'default': dj_database_url.parse(
+        'postgresql://django_project_061u_user:q7oC6Z0nNFyAriGAFOBGD80DnGEKqABG@dpg-crvdd1jv2p9s73eh75ag-a.oregon-postgres.render.com/django_project_061u',
         conn_max_age=600
     )
 }
+
 AUTH_USER_MODEL = 'archivos.CustomUser'  # Reemplaza 'myapp' con el nombre de tu aplicación que contiene el modelo personalizado
 
 
