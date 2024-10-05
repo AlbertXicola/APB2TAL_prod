@@ -3,6 +3,11 @@
 {% block content %}
 
 <style>
+  body {
+    display: flex !important;
+    flex-direction: column !important; /* Asegúrate de que esté configurado correctamente */
+    min-height: 130vh !important; /* Asegura que el body ocupe al menos toda la altura de la ventana */
+}
 .terms {
   margin: auto;
   max-width: 700px;
@@ -11,13 +16,41 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: justify;
+  margin-top: 120px;
+
 
 }
+@media (max-width: 768px) {
+  .terms {
+    max-width: 550px;
+
+    margin-left: 30PX;
+    margin-right: 30PX;
+    margin-top: 200px;
+
+  }
+}
+@media (max-width: 550px) {
+  .terms {
+    max-width: 400px;
+    max-height: 300PX;
+
+  }
+}
+@media (max-width: 370px) {
+  .terms {
+    max-width: 300px;
+    max-height: 300PX;
+
+  }
+}
+
 
 </style>
 
 <div class="terms">
-  <h1 style="color: #000000; font-size: 20px;">Terms and Conditions:</h1>
+  <h1 style="color: #000000; font-size: 20px;">Terms and Conditions</h1>
 
   <p style="color: #333; font-size: 11px; line-height: 1.5;">
 
