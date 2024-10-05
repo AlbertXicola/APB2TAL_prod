@@ -123,7 +123,6 @@ def editar_perfil(request):
         last_name = request.POST.get('last_name')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        edad = request.POST.get('edad')  # Obtener la edad del formulario
 
         # Obtener el usuario actual
         user = request.user
@@ -135,7 +134,6 @@ def editar_perfil(request):
         user.email = email
         if password:
             user.set_password(password)
-        user.edad = edad
    
         user.save()
 
