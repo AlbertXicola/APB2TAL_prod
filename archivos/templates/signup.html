@@ -58,12 +58,37 @@
         section{
             width: 350px;
         }
+        .small-input {
+            font-size: 9px; /* Tamaño de fuente */
+            padding: 6px;    /* Espaciado interno */
+            height: 20px;
+        }
     }
     @media (max-width: 550px) {
         section{
             margin-bottom: 130px;
         }
+        .small-input {
+            font-size: 9px; /* Tamaño de fuente */
+            padding: 5px;    /* Espaciado interno */
+            height: 20px;
+        }
+        .small-input2 {
+            font-size: 9px; /* Tamaño de fuente */
+            padding-left: 4px;    /* Espaciado interno */
+            padding-right: 4px;    /* Espaciado interno */
+            padding-top: 0px;
+            padding-bottom: 0px;
+            height: 20px;
+        }
+        label{
+            font-size: 9px; /* Tamaño de fuente */
+
+        }
+
     }
+
+    
 
 
 </style>
@@ -76,18 +101,18 @@
             {% csrf_token %}
             <div class="mb-3">
                 <label for="username">Username:</label>
-                <input type="text" name="username" id="username" class="form-control" placeholder="Write your username" required>
+                <input type="text" name="username" id="username" class="form-control small-input" placeholder="Write your username" required>
                 <span id="username-error" class="text-danger"></span>
                 <span id="username-warning" class="text-danger" style="display:none;">Special characters are not allowed except underscore (_)</span>
             </div>
             <div class="mb-3">
                 <label for="email">Email:</label>
-                <input type="email" name="email" id="email" class="form-control" placeholder="Write your email" required>
+                <input type="email" name="email" id="email" class="form-control small-input" placeholder="Write your email" required>
                 <span id="email-error" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label for="first_name">First name:</label>
-                <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Write your First name" required>
+                <input type="text" name="first_name" id="first_name" class="form-control small-input" placeholder="Write your First name" required>
                 <span id="first-name-error" class="text-danger"></span>
             </div>
             <!--<div class="mb-3">
@@ -98,15 +123,15 @@
             <div class="mb-3">
                 <label for="password1">Password:</label>
                 <div class="input-group">
-                    <input type="password" name="password1" id="password1" class="form-control" placeholder="Write your password" required>
-                    <button type="button" class="btn btn-outline-secondary" id="showPassword1">Show</button>
+                    <input type="password" name="password1" id="password1" class="form-control small-input" placeholder="Write your password" required>
+                    <button type="button" class="btn btn-outline-secondary small-input2" id="showPassword1">Show</button>
                 </div>
             </div>
             <div class="mb-3">
                 <label for="password2">Confirm your password:</label>
                 <div class="input-group">
-                    <input type="password" name="password2" id="password2" class="form-control" placeholder="Confirm your password" required>
-                    <button type="button" class="btn btn-outline-secondary" id="showPassword2">Show</button>
+                    <input type="password" name="password2" id="password2" class="form-control small-input" placeholder="Confirm your password" required>
+                    <button type="button" class="btn btn-outline-secondary small-input2 " id="showPassword2">Show</button>
                 </div>
             </div>
             <div class="mt-2 d-flex justify-content-center">
